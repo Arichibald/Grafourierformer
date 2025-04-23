@@ -136,9 +136,9 @@ if __name__ == '__main__':
 
         print(f"###Start with run_id : {args.run}###")
         if args.dataset == 'ZINC':
-            best_val, final_test, best_test = 1e5, 1e5, 1e5
+            best_val, final_test = 1e5, 1e5
         else:
-            best_val, final_test, best_test = 0, 0, 0
+            best_val, final_test = 0, 0
 
         train_loader, val_loader, test_loader, num_tasks, num_features, num_edge_features = load_data(args)
 
@@ -173,25 +173,17 @@ if __name__ == '__main__':
                     best_val = val_res
                     # final_test = test_acc
                     torch.save(state_dict, os.path.join(args.save_path, str(args.seed), "best_model.pt"))
-                if best_test > test_res:
-                    best_test = test_res
-                    # final_test = test_acc
-                    torch.save(state_dict, os.path.join(args.save_path, str(args.seed), "best_model_test.pt"))
             else:
                 if best_val < val_res:
                     best_val = val_res
                     # final_test = test_acc
                     torch.save(state_dict, os.path.join(args.save_path, str(args.seed), "best_model.pt"))
-                if best_test < test_res:
-                    best_test = test_res
-                    # final_test = test_acc
-                    torch.save(state_dict, os.path.join(args.save_path, str(args.seed), "best_model_test.pt"))
+
 
             if scheduler is not None:
                 scheduler.step()
 
-            print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_res:.4f}, '
-                  f'Test: {test_res:.4f}')
+            print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_res:.4f}')
 
         # load best model
         state_dict = torch.load(os.path.join(args.save_path, str(args.seed), "best_model.pt"))
@@ -201,8 +193,7 @@ if __name__ == '__main__':
         best_test_res = test(test_loader, args.criterion, "best_test")
 
         print(f'Val: {best_val_res:.4f}, '
-              f'Test: {best_test_res:.4f},'
-              f'best_test: {best_test:.4f},')
+              f'Test: {best_test_res:.4f},')
 
         print(f"Total time elapsed: {time.time() - start_time:.4f}s")
-        results_to_file(args, best_val_res, best_test_res, best_test)
+        results_to_file(args, best_val_res, best_test_res)

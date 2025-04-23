@@ -10,14 +10,6 @@ def set_config(args):
         args.mpnn = 'GCN'
         args.pool = 'mean'
         args.projection = 'mlp'
-    elif args.dataset == 'ZINC':
-        args.criterion = 'mae'
-        args.task = 'regression'
-        args.node_method = 'embedding'
-        args.edge_method = 'embedding'
-        args.mpnn = 'GINE'
-        args.pool = 'add'
-        args.projection = 'mlp'
     elif args.dataset == 'CLUSTER':
         args.criterion = 'accuracy'
         args.task = 'multi_class'
@@ -84,7 +76,7 @@ def gene_arg():
     group.add_argument('--gnn_residual', action='store_true', default=False)
     group.add_argument('--num_layers', type=int, default=15,
                        help='number of GNN message passing layers (default: 5)')
-    group.add_argument('--nhead', type=int, default=8,
+    group.add_argument('--nhead', type=int, default=4,
                        help='number of GNN message passing layers (default: 5)')
 
     group = parser.add_argument_group('training')
